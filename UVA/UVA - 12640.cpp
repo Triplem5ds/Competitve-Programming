@@ -1,4 +1,8 @@
 #include <bits/stdc++.h>
+/*
+  it was a simple kadane algorithim the whole trick was in getting the input due to not giving the size of the input array.
+  so i used some C++ features to do that.
+*/
 using namespace std;
 string s;
 vector<string>divide(string s){
