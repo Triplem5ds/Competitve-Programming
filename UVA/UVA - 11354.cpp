@@ -1,5 +1,10 @@
 #include <bits/stdc++.h>
 using namespace std;
+/*
+  A basic Comparision problem.
+  first you enter the first rectangle.
+  then you compare each rectangle with the one before it producing an intersection between them.
+*/
 struct PT{
   int x, y;
 };
