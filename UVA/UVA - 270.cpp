@@ -1,7 +1,10 @@
 #include <bits/stdc++.h>
 using namespace std;
 typedef long double db;
-
+/*
+  my idea was basically that if i should take every point and shift it -1 on the x - axis using the difference between that point and every other point 
+  and save it's new y - coordinatie in a map then loop over the map and find the maximum number.
+*/
 const db EPS = 1e-7;
 const db PI = acos(-1);
 
