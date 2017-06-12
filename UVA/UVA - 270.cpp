@@ -160,13 +160,6 @@ int main(){
         db k = -1/diff.x;
         db y2 = v[i].y + k * diff.y;
         mp[y2]++;
-        if(i == 0){
-          if(j == 1 || j == 2){
-            //cout << diff << endl;
-            //cout << y2 << endl;
-            //system("pause");
-          }
-        }
       }
       for(auto it : mp)
         ans = max(ans, it.second);
