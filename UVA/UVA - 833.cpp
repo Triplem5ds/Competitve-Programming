@@ -3,6 +3,14 @@ using namespace std;
 typedef long double db;
 typedef long long ll;
 
+/*
+  the idea is you to sort all lines by their upper y - axis
+  so that you can process segments from top - down then check
+  if this point is directly above this segment and between it's x - axis
+  see if the segment is tiled to the right or the left and assign the value
+  of either side to the point according to that
+*/
+
 
 const db EPS = 1e-7;
 const db PI = acos(-1);
