@@ -1,5 +1,9 @@
 #include <bits/stdc++.h>
 using namespace std;
+/*
+  the idea is since the number you need has to have odd divisors then it must be a square number
+  so i need to walk only to the cubic root.
+*/
 long long get_ans(long long x){
 
   long long ret = 1;
