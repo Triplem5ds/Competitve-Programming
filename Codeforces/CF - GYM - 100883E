@@ -1,0 +1,97 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define F first
+#define S second
+#define ios ios_base::sync_with_stdio(0);cin.tie(0);
+typedef long long ll;
+
+const ll N  = 1e4 + 5;
+
+const ll mod = 1e9 + 7;
+
+const ll boot = (1ll << 32ll);
+
+map<ll, ll>mp;
+
+struct trie{
+  trie *child[2];
+  trie(){
+    memset(child, 0, sizeof child);
+  }
+
+  void insert(ll cur, ll x){
+
+    if(!cur)
+      return;
+
+    ll tmp = ((cur&x) != 0);
+
+    if(!child[tmp])
+      child[tmp] = new trie();
+
+    child[tmp] -> insert(cur >> 1, x);
+  }
+  ll qry(ll cur, ll x){
+    if(!cur)return 0;
+
+    ll tmp = ((cur&x) != 0);
+
+
+    if(child[!tmp]){
+
+      return (cur) +  child[!tmp]->qry(cur >> 1, x);
+    }
+    return child[tmp] -> qry(cur >> 1, x);
+  }
+
+
+};
+
+
+int main(){
+
+    ios
+
+    ll t;
+    cin >> t;
+
+    while(t--){
+
+      ll n, q;
+      cin >> n >> q;
+
+      trie root = trie();
+
+      mp.clear();
+
+      for(ll i = 1; i <= n; i++){
+        ll x;
+
+        cin >> x;
+
+        if(!mp[x])mp[x] = i;
+
+        root.insert(boot, x);
+
+      }
+
+
+      while(q--){
+        ll x;
+
+        cin >> x;
+
+        cout << mp[x ^ root.qry(boot, x)] << '\n';
+
+      }
+
+      if(t)cout << '\n';
+
+    }
+
+
+
+
+
+  return 0;
+}
