@@ -1,0 +1,117 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+const int N = 505;
+
+int G[2 * N][2 * N];
+
+bool vis[N * 2];
+
+int n[2], m, t;
+
+int par[2 * N];
+
+vector<int>trees[2];
+bool bfs(int src){
+  queue<int>q;
+
+  q.push(src);
+
+  memset(par, -1, sizeof par);
+
+  while(q.size()){
+    int u = q.front();q.pop();
+
+    if(vis[u])continue;
+
+    if(u == (n[0] + n[1] + 1))return 1;
+
+    for(int i = 0; i <= n[0] + n[1] + 1; i++){
+      if(!vis[i] && par[i] == -1 && G[u][i] > 0){
+        q.push(i);
+        par[i] = u;
+      }
+    }
+  }
+  return 0;
+
+}
+
+
+int max_flow(int src, int sink){
+  int tot_flow = 0;
+
+  while(bfs(src)){
+    int path_flow = INT_MAX;
+
+    int u, v;
+
+
+    for(v = sink; v!=src; v = par[v]){
+      u = par[v];
+    //  cout << u << ' ';
+      if(u != src){
+        vis[u] = true;
+      }
+      path_flow = min(path_flow, G[u][v]);
+    }
+   // puts("");
+
+    for(v = sink; v != src; v = par[v]){
+      u = par[v];
+      G[u][v] -= path_flow;
+      G[v][u] += path_flow;
+    }
+
+    tot_flow += path_flow;
+
+  }
+
+
+
+  return tot_flow;
+}
+
+
+int can(int idx1, int idx2){
+  memset(G, 0, sizeof G);
+
+  memset(vis, 0, sizeof vis);
+
+  for(int i = 1; i <= m; i++)
+    G[0][i] = 1;
+  int cnt = 0;
+  for(int i = n[idx2]; cnt < m; i--, cnt++)
+    G[n[idx1] + i][n[0] + n[1] + 1] = 1;
+
+
+  for(int i = 0; i < n[idx1]; i++)
+    for(int j = 0; j < n[idx2]; j++)
+      if(abs(trees[idx1][i] - trees[idx2][j]) <= t)
+        G[i + 1][n[idx1] + 1 + j] = 1,G[n[idx1] + 1 + j][i + 1] = 1;
+  return max_flow(0, (n[0] + n[1]) + 1);
+}
+
+
+int main(){
+
+  //ios_base::sync_with_stdio(0);
+  //cin.tie(0);
+
+  cin >> m >> n[0] >> n[1] >> t;
+
+  trees[0].resize(n[0]);
+  trees[1].resize(n[1]);
+
+  for(int i = 0; i < n[0]; i++)
+    cin >> trees[0][i];
+  for(int i = 0; i < n[1]; i++)
+    cin >> trees[1][i];
+  sort(trees[0].rbegin(), trees[0].rend());
+  sort(trees[1].rbegin(), trees[1].rend());
+
+  if(can(0,1) >= m || can(1, 0) >= m)
+    cout << "S\n";
+  else
+    cout << "N\n";
+}
