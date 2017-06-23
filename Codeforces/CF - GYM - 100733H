@@ -1,0 +1,43 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+
+long long a[26][26];
+long long flyd[26][26];
+int main(){
+
+  for(long long i = 0; i < 26; i++)
+    for(long long j = 0; j < 26; j++)
+      cin >> a[i][j], flyd[i][j] = a[i][j];
+
+  for(long long k = 0; k < 26; k++)
+    for(long long i = 0; i < 26; i++)
+      for(long long j = 0; j < 26; j++)
+        flyd[i][j] = min(flyd[i][j], flyd[i][k] + flyd[k][j]);
+
+  string s;
+
+  cin >> s;
+
+  long long ret = 0;
+
+  for(long long i = 0; i < s.size()/2; i++){
+    if(s[i] == s[s.size() - 1- i])continue;
+
+    long long l = s[i] - 'a';
+    long long r = s[s.size() - 1 - i] - 'a';
+
+    long long mn = min(flyd[l][r], flyd[r][l]);
+
+    for(long long j = 0; j < 26; j++)
+     mn = min(mn, flyd[l][j] + flyd[r][j]);
+
+    ret += mn;
+
+  }
+
+
+  cout << ret << '\n';
+
+  return 0;
+}
