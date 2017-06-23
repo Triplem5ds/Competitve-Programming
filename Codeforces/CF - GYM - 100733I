@@ -1,0 +1,82 @@
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+const int N = 1e5 + 5;
+
+ll tree[4*N];
+
+ll qry(int node, int s, int e, int l, int r){
+  if(r < s || e < l)return 0;
+
+  if(l <= s && e <= r)return tree[node];
+
+  int md = (s + e) >> 1;
+
+  return max(qry(node << 1, s, md, l, r), qry(node << 1 | 1, md + 1, e, l, r));
+
+}
+void upd(int node, int s, int e, int l, int r, ll val){
+  if(r < s || e < l)return;
+
+  if(l <= s && e <= r){
+    tree[node] = max(tree[node], val);
+    return;
+  }
+  int md = (s + e) >> 1;
+
+  upd(node << 1, s, md, l, r, val);
+  upd(node << 1 | 1, md + 1, e, l, r, val);
+  tree[node] = max(tree[node << 1], tree[node << 1 | 1]);
+}
+
+int n;
+vector<int>v;
+
+int get_lo(int lo, int hi, int target){
+  if(lo >= hi)return v[lo];
+
+  int md = (lo + hi) >> 1;
+
+  if(v[md] >= target)
+    return get_lo(lo, md, target);
+  return get_lo(md + 1, hi, target);
+}
+
+int idx = 0;
+
+map<ll, int>mp;
+
+ll a[N][3];
+int main(){
+
+  scanf("%d", &n);
+
+  for(int i = 0; i < n; i++){
+    for(int j = 0; j < 3; j++)
+      scanf("%lld", &a[i][j]);
+    mp[a[i][0]];
+  }
+
+  for(auto it : mp)
+    mp[it.first] = idx++, v.push_back(it.first);
+
+
+  for(int i = 0; i < n; i++){
+    int lo = get_lo(0, v.size() - 1, a[i][0] - a[i][2]);
+
+    lo = mp[lo];
+    a[i][0] = mp[a[i][0]];
+
+    ll x = qry(1, 0, v.size() - 1, lo, a[i][0]);
+    upd(1, 0, v.size() - 1, a[i][0], a[i][0], x + a[i][1]);
+  }
+
+
+  cout << qry(1, 0, v.size() - 1, 0, v.size() - 1) << '\n';
+
+
+
+
+
+  return 0;
+}
