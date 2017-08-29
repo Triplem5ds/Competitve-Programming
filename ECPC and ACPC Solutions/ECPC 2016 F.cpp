@@ -1,5 +1,6 @@
 #include "bits/stdc++.h"
 
+
 using namespace std;
 
 typedef long long ll;
@@ -32,39 +33,4 @@ int main(){
             read(r);read(c);read(p);
             ll x = p * 1ll *  p;
             V[r + c].push_back({x + r, -x + r + 1 - C});
-            V[r - c + 3 * n - 2].push_back({x + r, -x + r + 1 - C});
-
-        }
-
-        int ans = 0;
-
-        for(auto &v : V){
-
-            if(v.size() == 0)continue;
-
-            sort(v.begin(), v.end());
-            int cnt = 1, cur = 0;
-            for(int i = 1; i < v.size(); i++){
-
-                if(v[i].second >= v[cur].first){
-
-                    cnt++;
-                    cur = i;
-                }
-
-            }
-
-            ans = max(ans, cnt);
-
-
-        }
-        printf("%d\n", ans);
-
-
-    }
-
-
-
-
-    return 0;
-}
+            V[r - c + 3 * n - 2
