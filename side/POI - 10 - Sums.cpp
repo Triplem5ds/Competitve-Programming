@@ -1,6 +1,13 @@
 #include "bits/stdc++.h"
 using namespace std;
 
+/*
+
+	if we can get to a number x then we can get to any number y where y = m * k + x where m and k are any two non negative integers
+	the only constraint is that we need to get to x with cost <= y thus we use dijkstra to go to any number with the least cost.
+
+*/
+
 #define F first
 #define S second
 #define mp(x, y) make_pair(x, y)
