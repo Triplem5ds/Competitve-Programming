@@ -18,7 +18,7 @@ private:
     build(1,0,n-1);
   }
   int pull(int node){
-    tr[node] = tr[leaf(node)] + tr[leaf(node) + 1];
+    tr[node] = tr[node<<1] + tr[node<<1|1];
   }
   void push(int node ,int s, int e){
     if(laz[node]){
@@ -55,16 +55,16 @@ private:
       //push(node,s,e);
       return;
     }
-    int md = div(s + e);
-    update(leaf(node), s, md, l, r, v);
-    update(leaf(node) + 1, md + 1, e, l, r, v);
+    int md = (s+e) >> 1;
+    update(node<<1, s, md, l, r, v);
+    update(node<<1|1, md + 1, e, l, r, v);
     pull(node);
   }
 public:
   void updR(int l, int r, int v){
     update(1,0,n-1,l,r,v);
   }
-  void updI(int x, v){
+  void updI(int x, int v){
     update(1,0,n-1,x,x,v);
   }
   int qry(int l, int r){
@@ -72,12 +72,6 @@ public:
   }
 };
 int main(){
-  int n;
-  cin >> n;
-  for(int i = 0; i < n; i++)
-    cin >> a[i];
-  int l, r;
-  build(1, 0, n-1);
 
 
 }
