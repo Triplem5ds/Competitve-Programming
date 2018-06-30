@@ -5,18 +5,6 @@ class SegmentTree{
 private:
   vector<int>tr, laz, a;
   int n;
-  SegmentTree(vector<int> & x){
-    a = x;
-    n = x.size();
-    tr.resize(4 * n), laz.resize(4 * n);
-    build(1,0,n-1);
-  }
-  SegmentTree(int n, int * x){
-    a.resize(n);
-    for(int i = 0; i < n; i++)a[i] = x[i];
-    tr.resize(4 * n), laz.resize(4 * n);
-    build(1,0,n-1);
-  }
   int pull(int node){
     tr[node] = tr[node<<1] + tr[node<<1|1];
   }
@@ -61,6 +49,22 @@ private:
     pull(node);
   }
 public:
+  SegmentTree(vector<int> & x){
+    a = x;
+    n = x.size();
+    tr.resize(4 * n), laz.resize(4 * n);
+    build(1,0,n-1);
+  }
+  SegmentTree(int n, int * x){
+    a.resize(n);
+    for(int i = 0; i < n; i++)a[i] = x[i];
+    tr.resize(4 * n), laz.resize(4 * n);
+    build(1,0,n-1);
+  }
+  SegmentTree(int n, int v):n(n){
+    tr.assign(4 * n,v);
+    laz.resize(4 * n);
+  }
   void updR(int l, int r, int v){
     update(1,0,n-1,l,r,v);
   }
