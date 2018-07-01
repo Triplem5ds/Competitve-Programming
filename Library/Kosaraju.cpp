@@ -7,7 +7,7 @@ using namespace std;
   vis : A bitset to mark visited nodes
   adj : Adjacency List of the super graph
   stk : holds dfs ordered elements
-  cmp[i] : holds the component of node i 
+  cmp[i] : holds the component of node i
   go[i] : holds the nodes inside the strongly connected component i
 */
 
@@ -55,28 +55,27 @@ int scc(){
 
 int main(){
 
-  scanf("%d%d, &n, &m);
-  
+  scanf("%d%d", &n, &m);
+
   g.resize(n+1);
-  rg.resize(n+1)
+  rg.resize(n+1);
   go.resize(n+1);
-  
+
   FOR(i,0,m){
     int u , v;  scanf("%d%d", &u, &v);
     adj[u].pb(v);
   }
-  
-  int cnt = scc():
-  go.reisze(cnt+1);
-  adj.resize(cnt+1);
 
+  int cnt = scc();
+  go.resize(cnt+1);
+  adj.resize(cnt+1);
   for(int i = 0; i < n; i++)
     for(auto v : g[i])if(cmp[i]!=cmp[v])
       adj[cmp[i]].push_back(cmp[v]);
- 
+
  for(int i = 0; i < cnt; i++){
     sort(adj[i].begin(),adj[i].end());
     adj[i].resize(unique(adj[i].begin(),adj[i].end()) - adj[i].begin());
   }
-  
+
 }
