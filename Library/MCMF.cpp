@@ -59,11 +59,11 @@ pair<int,double> MCMF(){
   pair<int,double>ret = make_pair(0,0.0);
   while(spfa()){
 
-    ret.first++;
+    ret.first+= flw[snk];
     ret.second += dist[snk];
     for(int i = snk; i != src; i = e[p[i]].from){
-      e[p[i]].flw++;
-      e[p[i]^1].flw--;
+      e[p[i]].flw+=flw[snk];
+      e[p[i]^1].flw-=flw[snk];
     }
 
 
