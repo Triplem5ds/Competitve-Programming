@@ -7,7 +7,6 @@ vector<vector<int>>adj;
 void dfs0(int u){
     sz[u] = 1;
     in[u] = timer;
-    sv[lvl[u]] += beauty[u];
     for(auto v : adj[u])if(v != p){
         lvl[v] = lvl[u] + 1;
         dfs0(v), sz[u] += sz[v];
@@ -29,7 +28,7 @@ void dfs1(int u, bool keep){
     int mx = -1, bigChild =-1;
     for(auto v : adj[u])if(v != p && sz[v] > mx)
         mx = sz[v], bigChild = v;
-    for(auto v : adj[u])if(v != bigChild && v !+ p)
+    for(auto v : adj[u])if(v != bigChild && v != p)
         dfs1(v, 0);
     if(~bigChild){
         dfs1(bigChild, 1);
