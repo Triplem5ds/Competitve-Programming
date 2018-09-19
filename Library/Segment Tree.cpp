@@ -5,8 +5,8 @@ class SegmentTree{
 private:
   vector<int>tr, laz, a;
   int n;
-  int pull(int node){
-    tr[node] = tr[node<<1] + tr[node<<1|1];
+  int pull(int x, int y){
+    return x + y;
   }
   void push(int node ,int s, int e){
     if(laz[node]){
@@ -26,14 +26,14 @@ private:
     int md = (s+e) >> 1;
     build(node<<1, s, md);
     build(node<<1|1, md + 1, e);
-    pull(node);
+    tree[node] = pull(tree[node<<1], tree[node<<1 | 1]);
   }
   int qry(int node, int s, int e, int l, int r){
     //push(node,s,e);
     if(r < s || e < l)return 0;
     if(l <= s && e <= r)return tr[node];
     int md = (s+e) >> 1;
-    return qry(node<<1, s, md, l, r) + qry(node<<1|1, md + 1, e, l, r);
+    return pull(qry(node<<1, s, md, l, r) , qry(node<<1|1, md + 1, e, l, r));
   }
   void update(int node, int s, int e, int l, int r, int v){
     //push(node,s,e);
@@ -46,7 +46,7 @@ private:
     int md = (s+e) >> 1;
     update(node<<1, s, md, l, r, v);
     update(node<<1|1, md + 1, e, l, r, v);
-    pull(node);
+    tree[node] = pull(tree[node<<1], tree[node<<1 | 1]);
   }
 public:
   SegmentTree(vector<int> & x){
