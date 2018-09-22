@@ -11,7 +11,6 @@ int par[mxN];
 void dfs_sz(int v = 0, int p = -1) {
 	sz[v] = 1;
 	par[v] = p;
-	//		//cerr << v << '\n';
 	for (auto &u : g[v]) {
 		if (u == p) {
 			swap(u, g[v].back());
@@ -28,7 +27,6 @@ void dfs_sz(int v = 0, int p = -1) {
 
 void dfs_hld(int v = 0) {
 	in[v] = t++;
-	//cerr << v << '\n';
 	rin[in[v]] = v;
 	for (auto u : g[v]) {
 		nxt[u] = (u == g[v][0] ? nxt[v] : u);
