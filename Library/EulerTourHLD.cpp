@@ -1,117 +1,96 @@
 #include "bits/stdc++.h"
 using namespace std;
-using ll = long long;
-const int N = 1e5 + 5;
-const int mod = 1e9 + 7;
 
-int n, q;
-vector<int>adj[N];
-int in[N], out[N];
-int sz[N], head[N], par[N];
-int timer;
+const int mxN = 100010;
 
-void dfs(int u){
-  sz[u] = 1;
-  for(auto & v : adj[u]){
-    par[v] = u;
-    dfs(v);
-    sz[u] += sz[v];
-    if(sz[v] > sz[adj[u][0]])
-      swap(v,adj[u][0]);
-  }
+int sz[mxN], nxt[mxN];
+int in[N], out[N], rin[N];
+vector<int> g[mxN];
+int par[mxN];
+
+void dfs_sz(int v = 0, int p = -1) {
+	sz[v] = 1;
+	par[v] = p;
+	//		//cerr << v << '\n';
+	for (auto &u : g[v]) {
+		if (u == p) {
+			swap(u, g[v].back());
+		}
+		if(u == p) continue;
+		dfs_sz(u,v);
+		sz[v] += sz[u];
+		if (sz[u] > sz[g[v][0]])
+			swap(u, g[v][0]);
+	}
+	if(v != 0)
+		g[v].pop_back();
 }
 
-void dfsHLD(int u){
-
-  in[u] = ++timer;
-
-  if(adj[u].size()){
-    head[adj[u][0]] = head[u];
-    dfsHLD(adj[u][0]);
-  }
-
-  for(auto v : adj[u])if(v != adj[u][0]){
-
-    head[v] = v;
-    dfsHLD(v);
-
-  }
-
-  out[u] = timer;
-
-}
-int lz[N<<2];
-struct node{
-  int sum, mx;
-  node(int sum = -n * 2, int mx = -n * 2) : sum(sum), mx(mx){}
-}tree[N<<2];
-
-node merge(node L, node R){
-  if(L.sum == -n * 2)return R;
-  if(R.sum == -n * 2)return L;
-  return node(L.sum + R.sum, max(R.mx,L.mx + R.sum));
+void dfs_hld(int v = 0) {
+	in[v] = t++;
+	//cerr << v << '\n';
+	rin[in[v]] = v;
+	for (auto u : g[v]) {
+		nxt[u] = (u == g[v][0] ? nxt[v] : u);
+		dfs_hld(u);
+	}
+	out[v] = t;
 }
 
-void build(int o, int s, int e){
-  if(s==e){
-    tree[o] = node(-1,-1);
-  } else {
-    int md = (s+e) >> 1;
-    build(o<<1,s,md);
-    build(o<<1|1,md+1,e);
-    tree[o] = merge(tree[o<<1], tree[o<<1|1]);
-  }
+int n;
+bool isChild(int p, int u){
+  return in[p] <= in[u] && out[u] <= out[p];
 }
-void push(int o, int s, int e){
-  if(!lz[o])return;
-  tree[o] = node(-(e-s+1), -1);
-  if(s!=e){
-    lz[o<<1] = lz[o<<1|1]= 1;
+int solve(int u,int v) {
+	vector<pair<int,int> > segu;
+	vector<pair<int,int> > segv;
+  vector<pair<int,int>>L,R;
+	if(isChild(u,v)){
+    while(nxt[u] != nxt[v]){
+      segv.push_back(make_pair(in[nxt[v]], in[v]));
+      v = par[nxt[v]];
+    }
+    segv.push_back({in[u], in[v]});
+//    for(auto x : segv)
+//      cout << x.first+1 << ' ' << x.second + 1 << '\n';
+	} else if(isChild(v,u)){
+    while(nxt[u] != nxt[v]){
+      segu.push_back(make_pair(in[nxt[u]], in[u]));
+      u = par[nxt[u]];
+    }
+    segu.push_back({in[v], in[u]});
   }
-  lz[o] = 0;
-}
-void upd(int o, int s, int e, int l, int r){
-  push(o,s,e);
-  if(r<s||e<l)return;
-  if(l<=s&&e<=r){
-    lz[o] = 1;
-    push(o,s,e);
-  } else {
-    int md = (s+e)>>1;
-    upd(o<<1,s,md,l,r);
-    upd(o<<1|1,md+1,e,l,r);
-    tree[o] = merge(tree[o<<1], tree[o<<1|1]);
-  }
-}
-void updIdx(int o, int s, int e, int idx, int v){
-  push(o,s,e);
-  if(idx < s || e < idx)return;
-  if(s==e){
-    tree[o].sum += v;
-    tree[o].mx += v;
-    return;
-  }
-  int md = (s + e) >> 1;
-  updIdx(o<<1,s,md,idx,v);
-  updIdx(o<<1|1,md+1,e,idx,v);
-  tree[o] = merge(tree[o<<1], tree[o<<1|1]);
-}
-node qry(int o, int s, int e, int l, int r){
-  push(o,s,e);
-  if(r<s||e<l)return node();
-  if(l<=s&&e<=r){
-    return tree[o];
-  }
-  int md = (s+e)>> 1;
-  return merge(qry(o<<1,s,md,l,r),
-               qry(o<<1|1,md+1,e,l,r));
-}
-node get(int u){
-  node ret = node();
-  while(head[u] != 1){
-    ret = merge(qry(1,1,n,in[head[u]], in[u]), ret);
-    u = par[head[u]];
-  }
-  ret = merge(qry(1,1,n,1,in[u]), ret);
-  return ret;
+  else {
+    while(u  != v) {
+      if(nxt[u] == nxt[v]) {
+        if(in[u] < in[v]) segv.push_back({in[u],in[v]}), R.push_back({u+1,v+1});
+        else segu.push_back({in[v],in[u]}), L.push_back({v+1,u+1});
+        u = v;
+        break;
+      } else if(in[u] > in[v]) {
+        segu.push_back({in[nxt[u]],in[u]}), L.push_back({nxt[u]+1, u+1});
+        u = par[nxt[u]];
+      } else {
+        segv.push_back({in[nxt[v]],in[v]}), R.push_back({nxt[v]+1, v+1});
+        v = par[nxt[v]];
+      }
+    }
+	}
+	reverse(segv.begin(),segv.end());
+//	reverse(R.begin(),R.end());
+	int res = 0,state = 0;
+	for(auto p : segu) {
+		qry(1,1,0,n-1,p.first,p.second,state,res);
+//		cout << rin[p.first ] + 1<< ' ' << rin[p.second]+1 << '\n';
+	}
+//	cout << "------------------------\n";
+	for(auto p : segv) {
+		qry(0,1,0,n-1,p.first,p.second,state,res);
+//		cout << rin[p.first ]+1<< ' ' << rin[p.second]+1 << '\n';
+	}
+//	for(auto x : L)
+//		cout << x.first << ' ' << x.second << '\n';
+//	for(auto x : R)
+//		cout << x.first << ' ' << x.second << '\n';
+	return res;
 }
