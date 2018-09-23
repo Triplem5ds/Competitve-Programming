@@ -12,6 +12,8 @@ using ll = long long;
 int testPrimes[] = {2,3,5,7,11,13,17,19,23};
 
 struct MillerRabin{
+  ///change K according to n
+  const int K = 9;
   ll mult(ll s, ll m, ll mod){
     if(!m) return 0;
     ll ret = mult(s, m/2, mod);
@@ -43,12 +45,12 @@ struct MillerRabin{
   bool isPrime(ll n){	// return 1 if prime, 0 otherwise
     if(n < 2) return 0;
     if(!(n&1)) return n == 2;
-
+    for(int i = 0; i < K; i++)if(n == testPrimes[i])return 1;
     ll u = n-1; int t = 0;
 
     while(u&1) u >>= 1, t++;	// n-1 = u*2^t
 
-    for(int i = 0; i < 9; i++) if(witness(testPrimes[i], n, u, t)) return 0;
+    for(int i = 0; i < K; i++) if(witness(testPrimes[i], n, u, t)) return 0;
     return 1;
   }
 }tester;
