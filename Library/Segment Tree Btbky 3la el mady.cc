@@ -1,27 +1,50 @@
 struct node{
-  node * L;
-  node * R;
-  int s, e, sum;
-  node(node * L = 0, node * R = 0, int s = 0, int e = 0, int sum = 0):
-    L(L), R(R), s(s), e(e), sum(sum){}
+  node * L, *R;
+  int val;
+  node(){
+    val = 0;
+    L = R = NULL;
+  }
 };
-node * trees[N];
-node * upd(node * root, int idx, int v){
+int mrg(node * x, node * y){
+  /// i am sure on of them is not empty
+  /// be careful according to the problem
+  assert((x) || (y));
+  if(!x)return y->val;
+  if(!y)return x->val;
+  return x->val + y->val;
+}
+node * upd(node * root, int s, int e, int idx, int v){
   node * ret = new node();
-  ret->s = root->s;
-  ret->e = root->e;
-  ret->sum = root->sum + v;
-//  cout << root->s << ' ' << root->e << '\n';
-//  system("pause");
-  if(root->s == root->e)return ret;
-  int md = (root->s+root->e)>>1;
+  if(s == e){
+    ret->val = v;
+    return ret;
+  }
+  int md = (s+e)>>1;
   if(idx <= md){
     if(root->L == 0)
-      root->L = new node(0,0,root->s,md,0);
-    ret->L = upd(root->L,idx,v), ret->R=root->R;
-  }
-  else{
+      root->L = new node();
+    ret->L = upd(root->L,s,md,idx,v), ret->R = root->R;
+  } else{
     if(root->R == 0)
-      root->R = new node(0,0,md+1,root->e,0);
-    ret->R = upd(root->R,idx,v), ret->L = root->L;
+      root->R = new node();
+    ret->R = upd(root->R,md+1,e,idx,v), ret->L = root->L;
   }
+  ret->val = mrg(ret->L, ret->R);
+  return ret;
+}
+int qry(node * root, int s, int e, int l, int r){
+  if(!root || r < s || e < l)return 0;
+  if(l <= s && e <= r){
+    return root->val;
+  }
+  int md = (s+e)>>1;
+  return qry(root->L,s,md,l,r)
+  + qry(root->R,md+1,e,l,r);
+}
+
+node * trees[100005];
+
+/*
+  trees[x] = upd(trees[prv(x)]);
+*/
