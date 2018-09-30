@@ -13,11 +13,10 @@ const int mod = 1e9 + 7;
 
 /*
     IDEA
-    if i walk on the array from left to right
-    for each x if |(j,x)| >= min(j,x) and x <= i
-    so |(j,i)| >= min(j,i) so once this state opens
-    i don't need to open it again
-
+    i have 3 dp
+    dp1[N] = diameter of sub-tree
+    tdp[N] = diameter + path up to u
+    dp2[N] = two paths with maximum length.
 */
 
 int n, k, a[N];
