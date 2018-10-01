@@ -1,0 +1,128 @@
+#include "bits/stdc++.h"
+using namespace std;
+
+const int N = 1e5 + 5;
+const int K = 6;
+const int mod = 1e9 + 7;
+
+int sv[N][K], n, m;
+int C[K][K];
+
+struct node{
+
+    int sum[K] = {};
+    int lz = -1;
+    node(){}
+
+}tree[N<<2];
+void add(int & x, int y){if((x += y) >= mod)x -= mod;}
+int get(int pwr, int l, int r){
+    int ret = sv[r][pwr];
+    if(l)ret -= sv[l-1][pwr];
+    if(ret < 0)ret += mod;
+    return ret;
+}
+void init(){
+
+    for(int i = 0; i < K; i++)
+        for(int j = 0; j <= i; j++)
+            C[i][j] = (j == 0? 1 : C[i-1][j-1] + C[i-1][j]);
+
+    for(int i = 0; i < N; i++){
+        sv[i][0] = 1;
+        for(int j = 1; j < K; j++){
+            sv[i][j] = sv[i][j-1] * 1ll * i % mod;
+        }
+        if(i)
+        for(int j = 0; j < K; j++)
+            add(sv[i][j], sv[i-1][j]);
+    }
+}
+node mrg(node L, node R){
+    node ret;   ret.lz = -1;
+    for(int i = 0; i < K; i++){
+        add(ret.sum[i],L.sum[i]);
+        add(ret.sum[i],R.sum[i]);
+    }
+    return ret;
+}
+void push(int node, int s, int e){
+    if(~tree[node].lz){
+        for(int i = 0; i < K; i++){
+            tree[node].sum[i] = get(i,s,e) * 1ll * tree[node].lz % mod;
+        }
+        if(s != e){
+            tree[node<<1].lz = tree[node].lz;
+            tree[node<<1|1].lz = tree[node].lz;
+        }
+        tree[node].lz = -1;
+    }
+}
+void build(int node, int s, int e){
+
+    if(s == e){
+        int x;  scanf("%d", &x);
+        for(int j = 0; j < K; j++){
+            tree[node].sum[j] = x * 1ll * get(j,s,s) % mod;
+        }
+    }   else {
+        int md = (s + e) >> 1;
+        build(node<<1,s,md);
+        build(node<<1|1,md+1,e);
+        tree[node] = mrg(tree[node<<1], tree[node<<1|1]);
+    }
+}
+void upd(int node, int s, int e, int l, int r, int v){
+    push(node,s,e);
+    if(r<s||e<l)return;
+    if(l<=s&&e<=r){
+        tree[node].lz = v;
+        push(node,s,e);
+        return;
+    }
+    int md = (s+e)>>1;
+    upd(node<<1,s,md,l,r,v);
+    upd(node<<1|1,md+1,e,l,r,v);
+    tree[node] = mrg(tree[node<<1], tree[node<<1|1]);
+}
+node qry(int node, int s, int e, int l, int r){
+    push(node,s,e);
+    if(l <= s && e <= r)
+        return tree[node];
+    int md = (s+e)>>1;
+    if(md < l)
+        return qry(node<<1|1,md+1,e,l,r);
+    else if(r <= md)
+        return qry(node<<1,s,md,l,r);
+    return
+        mrg(qry(node<<1,s,md,l,r),qry(node<<1|1,md+1,e,l,r));
+}
+
+int main(){
+
+    init();
+    scanf("%d%d", &n, &m);
+    build(1,1,n);
+    char c;
+    int l,r,x;
+    while(m--){
+        scanf(" %c%d%d%d", &c, &l, &r, &x);
+        if(c == '?'){
+            auto range = qry(1,1,n,l,r);
+            int out = 0;
+            for(int i = 0; i <= x; i++){
+                int add = C[x][i];
+                if(i&1)add = mod - add;
+                add = add * 1ll * get(i,l-1,l-1) % mod;
+                add = add * 1ll * range.sum[x-i] % mod;
+//                cout << get(i,l-1,l-1) << '\n';
+                out += add; if(out >= mod)out -= mod;
+            }
+            printf("%d\n", out);
+        }   else {
+            upd(1,1,n,l,r,x);
+        }
+    }
+
+    return 0;
+}
