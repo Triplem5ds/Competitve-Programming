@@ -1,15 +1,12 @@
 /*
     to check the no rectangle case
     check that number of distinct integers >= k-1
-    now for the main problem first give him all the distinct
-    integers now i need the smallest to occur first
-    so i sort the rest and get the biggest 2 and output their multiplication
-    okay wait i think i found it out
     if i can put 3 of the same kind then it's also -1
     so if distinct integers == k-2 and there is some one of at least freq 3 answer is -1
+    now for the main problem first give him all the distinct
     now the answer is either 2 different or 3 of the same
     i think i can get rid of all the cases if i basically use binary search and check the number of sticks i can put
-    i think i can get of the 3 same case by decomposing the vector int x-2 and 2 for each element
+    i think i can get rid of the 3 same case by decomposing the vector int x-2 and 2 for each element
     what is left is for me to check each prefix then binary search on the last element i can get
     and check rmq
     After Accept:
@@ -83,7 +80,8 @@ int main(){
 
             ll lo = 1, hi = 1000000000000000000ll;
 
-            ///solution nlg^2n
+            ///solution nlgnlgA
+            ///there is a nlgA solution
 
             while(lo < hi){
 
