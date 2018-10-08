@@ -21,7 +21,6 @@ vector<int>adj[N];
 int dp[N][3], n;
 int vis[N][3], cas;
 int solve(int node, int p, int state){
-
     int &ret = dp[node][state];
     if(vis[node][state] == cas)
         return ret;
@@ -35,18 +34,16 @@ int solve(int node, int p, int state){
         }
         ret = min(ret,1 + sum1);
     }
-//    if(node==1)cout << ret << '\n';
-
     ///don't put this node as a server
     if(state != 2){
         if(state!=1||(adj[node].size()-(node!=p) > 0)){
-        int sum2 = 0;
-        for(auto v : adj[node])if(v != p){
-            sum2 += solve(v,node,state+1);
+            int sum2 = 0;
+            for(auto v : adj[node])if(v != p){
+                sum2 += solve(v,node,state+1);
+            }
+            ret = min(ret, sum2);
         }
-        ret = min(ret, sum2);}
     }
-
     return ret;
 }
 int main(){
