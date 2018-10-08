@@ -1,9 +1,3 @@
-/*
-    dp[node][state];
-    state 0 : the node before me is a server
-    state 1 : the node before me isn't a server but it's covered by a server
-    state 2 : the node before me is a server but it's not covered by a server
-*/
 #include <bits/stdc++.h>
 
 using namespace std;
