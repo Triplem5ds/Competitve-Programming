@@ -20,23 +20,19 @@ int val[N];
 vector<int> corrsponds[N];
 int ans[N];
 vector<int> qu[2][N];
-ll laz[N<<1];
-void upd(int l, int r,int v){
-    l += N;
-    r += N;
-    laz[l]+=v;
-    if(l!=r)laz[r]+=v;
-    while(l+1<r){
-        if(l&1^1)laz[l+1]+=v;
-        if(r&1)laz[r-1]+=v;
-        l >>= 1;
-        r >>= 1;
-    }
+ll bit[N];
+void upd(int idx, int v){
+    for(idx++; idx < N; idx += idx & -idx)
+        bit[idx] += v;
+}
+void upd(int l, int r, int v){
+    upd(l,v);
+    upd(r+1,-v);
 }
 ll qry(int idx){
-    ll ret = 0;idx++;
-    for(int i = N+idx;i>=1;i>>=1)
-        ret += laz[i];
+    ll ret = 0;
+    for(idx++; idx; idx -= idx & -idx)
+        ret += bit[idx];
     return ret;
 }
 int main(){
@@ -68,14 +64,13 @@ int main(){
 
 
     for(int i = 0; i < 20; i++){
-//        cerr << "Search : " << i << '\n';
         for(int j = 0; j < k; j++)qu[i&1^1][j].clear();
         for(int j = 0; j < k; j++){
             if(l[j] <= r[j])
-                upd(l[j]+1,r[j]+1,add[j]);
+                upd(l[j],r[j],add[j]);
             else
-                upd(l[j]+1,N-1,add[j]),
-                upd(0,r[j]+1,add[j]);
+                upd(l[j],m-1,add[j]),
+                upd(0,r[j],add[j]);
             for(auto v : qu[i&1][j]){
                 ll sum = 0;
                 for(auto x : corrsponds[v]){
@@ -95,10 +90,10 @@ int main(){
 
         for(int j = 0; j < k; j++){
             if(l[j] <= r[j])
-                upd(l[j]+1,r[j]+1,-add[j]);
+                upd(l[j],r[j],-add[j]);
             else
-                upd(l[j]+1,N-1,-add[j]),
-                upd(0,r[j]+1,-add[j]);
+                upd(l[j],m-1,-add[j]),
+                upd(0,r[j],-add[j]);
         }
 
     }
