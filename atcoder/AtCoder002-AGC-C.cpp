@@ -1,6 +1,3 @@
-/*
- * Code Be weshen zyk :(
- */
 
 #pragma GCC optimize ("O3")
 #pragma GCC target ("sse4")
