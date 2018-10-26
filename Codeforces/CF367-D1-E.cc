@@ -21,9 +21,7 @@ const int mod = 1e9 + 7;
  */
 
 int n, m, x;
-int getHash(int idx, int L){
-	return idx * m + L;
-}
+
 void add(int &x, int y){x += y; if(x >= mod)x -= mod;}
 int factN;
 vector<int>dp[320][320][2];
