@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> 42adec309852edcbb02250fc06451e9e19b7f246
 #pragma GCC optimize ("O3")
 #pragma GCC target ("sse4")
 
