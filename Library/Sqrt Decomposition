@@ -1,5 +1,10 @@
-vector<ii> tsunami[blkSz];	///Maintaining Answer for each block
-ll lz[blkSz];	///Maintaining Lazy for block
+
+const int mxN = 1e5 + 5;
+const int blkSz = 200;
+const int blkNum = (mxN + blkSz - 1) / blkSz;
+
+vector<ii> tsunami[blkNum];	///Maintaining Answer for each block
+ll lz[blkNum];	///Maintaining Lazy for block
 ll freq[mxN];	///Maintaining Frequency for each price
 pair<ll, ll> qry(int l, int r) {
 	r++;
