@@ -1,0 +1,60 @@
+vector<ii> tsunami[blkSz];	///Maintaining Answer for each block
+ll lz[blkSz];	///Maintaining Lazy for block
+ll freq[mxN];	///Maintaining Frequency for each price
+pair<ll, ll> qry(int l, int r) {
+	r++;
+	pair<ll, int> ret = make_pair(-1e5, 0);
+	//Get first sub-block;
+	for (; l < r && l % blkSz != 0; l++) {
+		ret = max(ret, make_pair(freq[l], l));
+	}
+	//Get Complete Blocks
+	for (; l / blkSz != r / blkSz; l += blkSz) {
+		int idx = tsunami[l / blkSz].back().second;
+		ll advance = lz[l / blkSz];
+		ll val = freq[idx] + advance * 1ll * idx;
+		ret = max(ret, make_pair(val, idx));
+	}
+	//Get Last sub-block
+	for (; l < r; l++) {
+		ret = max(ret, make_pair(freq[l], l));
+	}
+
+	return ret;
+}
+void calcArray(ll idx) {
+	ll l = idx * blkSz, r = l + blkSz - 1;
+	//Clear Array
+	bool f = false;
+	//Propagate Lazy
+	for (ll i = l; i <= r; i++) {
+		freq[i] += lz[idx] * 1ll * i;
+	}
+	lz[idx] = 0;
+	//Recalculate Array
+}
+void updPart(int l, int r) {
+	///update range for sub block
+	for(int i = l; i <= r; i++)
+		freq[i] += i;
+	///Recalculate the Array if forced to
+//	calcArray(l/blkSz);
+}
+void updKollo(int idx) {
+	lz[idx]++;	///update the whole block
+}
+void upd(int l, int r) {
+	if(r / blkSz == l / blkSz){
+		updPart(l,r);
+		return;
+	}
+	r++;
+	if(l%blkSz != 0){
+		updPart(l,(l+blkSz-1)/blkSz-1);
+	}
+	for(;l/blkSz != r / blkSz; l += blkSz)
+		updKollo(l/blkSz);
+	if(l != r){
+		updPart(l,r-1);
+	}
+}
