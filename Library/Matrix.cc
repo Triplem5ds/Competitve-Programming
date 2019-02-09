@@ -13,7 +13,7 @@ struct Matrix {
 		Matrix ret;
 		for (int i = 0; i < 5; i++)
 			for (int j = 0; j < 5; j++)
-				for (int k = 0; k < 6; k++)
+				for (int k = 0; k < 5; k++)
 					ret[i][j] = (ret[i][j] + A[i][k] * B[k][j]) % MOD;
 		return ret;
 	}
