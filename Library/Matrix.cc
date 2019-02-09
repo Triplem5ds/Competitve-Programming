@@ -1,36 +1,20 @@
-struct Matrix {
-	ll a[105][105];
-	int n;
-	Matrix(int N) {
-		n = N;
-		memset(a, 0, sizeof a);
+struct Matrix{
+	ll mat[5][5];
+	Matrix(bool I){
+		memset(mat, 0, sizeof mat);
+		if(I)
+			for(int j = 0; j < 5; j++)
+				mat[j][j] = 1;
 	}
-	Matrix operator *(const Matrix & o) const {
-		Matrix ret(n);
-		for (int i = 0; i < n; i++)
-			for (int j = 0; j < n; j++)
-				for (int k = 0; k < n; k++)
-					ret.a[i][j] = (ret.a[i][j] + a[i][k] * o.a[k][j] % mod)
-							% mod;
+	int * operator [] (int i){
+		return mat[i];
+	}
+	friend Matrix operator * (Matrix A, Matrix B){
+		Matrix ret;
+		for(int i = 0; i < 5; i++)
+			for(int j = 0; j < 5; j++)
+				for(int k = 0; k < 6; k++)
+					ret[i][j] = (ret[i][j] + A[i][k] * B[k][j]) % MOD;
 		return ret;
 	}
-	void addEdge(int u, int v) {
-		a[u][v]++;
-	}
-	Matrix I() {
-		Matrix ret(n);
-		for (int i = 0; i < n; i++)
-			ret.a[i][i] = 1;
-		return ret;
-	}
-	Matrix fast(ll p) {
-		if (!p)
-			return I();
-		Matrix ret = fast(p >> 1);
-		ret = ret * ret;
-		if (p & 1)
-			ret = ret * (*this);
-		return ret;
-	}
-
 };
