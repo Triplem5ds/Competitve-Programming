@@ -7,7 +7,7 @@ void push(int node, int s, int e) {
 	if (s != e) {
 	}
 }
-void mrg(int a, int b) {
+int mrg(int a, int b) {
 
 }
 void build(int node, int s, int e) {
