@@ -1,45 +1,60 @@
-struct SuffixArray {
-    string a;
-    int N, m;
-    vector<int> SA, LCP, x, y, w, c;
+struct suff_arr {
+	int n;
+	vector<int> A,I;
 
-    SuffixArray(string _a, int m) : a(" " + _a), N(a.length()), m(m),
-            SA(N), LCP(N), x(N), y(N), w(max(m, N)), c(N) {
-        a[0] = 0;
-        DA();
-        kasaiLCP();
-        #define REF(X) { rotate(X.begin(), X.begin()+1, X.end()); X.pop_back(); }
-        REF(SA); REF(LCP);
-        a = a.substr(1, a.size());
-        for(int i = 0; i < (int) SA.size(); ++i) --SA[i];
-        #undef REF
-    }
+	suff_arr(const string& s):n(s.size()),A(s.size()+1) {
+		for(int i = 0; i < n; ++i) A[i] = s[i]+1;
+		vector<int> T(n),L(n),F(n+1);
+		I = A;
+		for(int i = 0; i < n; ++i) L[i] = i;
+		A[n] = I[n] = 0;
+		sort(L.begin(),L.end(),[this](int i, int j) {return (A[i]!=A[j])?A[i]<A[j]:A[min(i+1,n)]<A[min(j+1,n)];});
+		for(int g = 1;;) {
+			for(int i = 0; i < n; ++i)
+				I[L[i]] = (i && A[L[i]]==A[L[i-1]] && A[min(L[i]+g,n)]==A[min(L[i-1]+g,n)]) ? I[L[i-1]] : i+1;
+			if((g <<= 1) < n) {
+				fill(F.begin(),F.end(),0);
+				F[0] = g;
+				for(int i = n-1; i >= g; --i) ++F[I[min(i,n)]];
+				for(int i = 1; i <= n; ++i) F[i] += F[i-1];
+				for(int i = 0; i < n; ++i) T[--F[I[min(i+g,n)]]] = i;
+				fill(F.begin(),F.end(),0);
+				for(int i = 0; i < n; ++i) ++F[I[i]];
+				for(int i = 1; i <= n; ++i) F[i] += F[i-1];
+				for(int i = n-1; i >= 0; --i) L[--F[I[T[i]]]] = T[i];
+				swap(A,I);
+			} else break;
+		}
+		A.pop_back(), I.pop_back();
+		for(int i = 0; i < n; ++i)
+			A[--I[i]] = i;
+	}
 
-    inline bool cmp (const int a, const int b, const int l) { return (y[a] == y[b] && y[a + l] == y[b + l]); }
+	//lcp stuff : can be removed if not needed
+	vector<vector<int> > rmq;
+	inline int lg(int a){return 31-__builtin_clz(a);}
+	void kasai(const string& s) {
+		rmq = vector<vector<int> >(lg(n)+1,vector<int>(n));
+		int k = 0,j;
+		for(int i = 0; i < n; ++i) {
+			if(I[i]==n-1) {
+				k = 0;
+				continue;
+			}
+			for(j = A[I[i]+1];i+k<n && j+k<n && s[i+k] == s[j+k]; ++k);
+			rmq[0][I[i]] = k;
+			if(k) --k;
+		}
+		for(k = 0, j = 1; k+1 < rmq.size(); j<<=1,++k)
+			for(int i = 0; i < n; ++i)
+				rmq[k+1][i] = (i+j<n)?min(rmq[k][i],rmq[k][i+j]):rmq[k][i];
+	}
 
-    void Sort() {
-        for(int i = 0; i < m; ++i) w[i] = 0;
-        for(int i = 0; i < N; ++i) ++w[x[y[i]]];
-        for(int i = 0; i < m - 1; ++i) w[i + 1] += w[i];
-        for(int i = N - 1; i >= 0; --i) SA[--w[x[y[i]]]] = y[i];
-    }
-
-    void DA() {
-        for(int i = 0; i < N; ++i) x[i] = a[i], y[i] = i;
-        Sort();
-        for(int i, j = 1, p = 1; p < N; j <<= 1, m = p) {
-            for(p = 0, i = N - j; i < N; i++) y[p++] = i;
-            for (int k = 0; k < N; ++k) if (SA[k] >= j) y[p++] = SA[k] - j;
-            Sort();
-            for(swap(x, y), p = 1, x[SA[0]] = 0, i = 1; i < N; ++i)
-                x[SA[i]] = cmp(SA[i - 1], SA[i], j) ? p - 1 : p++;
-        }
-    }
-
-    void kasaiLCP() {
-        for (int i = 0; i < N; i++) c[SA[i]] = i;
-        for (int i = 0, j, k = 0; i < N; LCP[c[i++]] = k)
-            if (c[i] > 0) for (k ? k-- : 0, j = SA[c[i] - 1]; a[i + k] == a[j + k]; k++);
-            else k = 0;
-    }
+	int lcp(int i, int j) {
+		if(i == j) return n-i;
+		i=I[i],j=I[j];
+		if(j<i) swap(i,j);
+		int l = lg(j-i);
+		return min(rmq[l][i],rmq[l][j-(1<<l)]);
+	}
 };
